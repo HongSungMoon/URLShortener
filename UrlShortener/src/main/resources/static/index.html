@@ -6,10 +6,43 @@
 </head>
 <body>
 	<h1>My URL Shortener</h1>
-	<form action='/get/url' method='post'>
-		URL : <input name='url' type='text' />
-		<input type='submit'
+	<form name='inputform' id='inputform'>
+		URL : <input name='url' type='text' id="url"/>
+		 <input type='button' id='send'
 			value='Send'>
+
 	</form>
+	<br>
+	<p>
+		Short URL : <span id="shorUrl"></span>
+	</p>
+	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script>
+		$('#send').click(function() {
+			$.ajax({
+				url : 'http://localhost:8080/get/url',
+				type : 'post',
+				data : $('form').serialize(),
+				success : function(data) {
+					$('#shorUrl').text(data);
+				}
+			})
+		});
+
+		$('input[type="text"]').keydown(function() {
+		    if (event.keyCode === 13) {
+		        event.preventDefault();
+		        $.ajax({
+					url : 'http://localhost:8080/get/url',
+					type : 'post',
+					data : $('form').serialize(),
+					success : function(data) {
+						$('#shorUrl').text(data);
+					}
+				})
+		    }
+		});
+		
+	</script>
 </body>
 </html>
