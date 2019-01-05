@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.urlshortener.database.URLShortenerMapper;
 import com.urlshortener.model.TargetURL;
 import com.urlshortner.service.URLShorteningService;
 
@@ -20,6 +21,19 @@ public class UrlShortenerController {
 	@Autowired
 	URLShorteningService urlShorteningService;
 	
+	@Autowired
+	URLShortenerMapper urlShortenerMapper;
+	
+	@RequestMapping(value="/")
+    public String home() {
+        return "home";       
+    }
+	
+	@RequestMapping(value="/login")
+    public String loginPage() {
+        return "login";       
+    }
+
 	@RequestMapping(value = "/get/url", method = RequestMethod.POST)
 	public ResponseEntity<String> getURL(TargetURL url) throws MalformedURLException, ProtocolException {
 		String shorturl = urlShorteningService.urlShortening(url.getUrl());

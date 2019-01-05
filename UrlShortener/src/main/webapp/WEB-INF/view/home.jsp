@@ -10,11 +10,10 @@
 		URL : <input name='url' type='text' id="url"/>
 		 <input type='button' id='send'
 			value='Send'>
-
 	</form>
 	<br>
 	<p>
-		Short URL : <span id="shorUrl"></span>
+		Short URL : <a href="" id="hlink"><span id="shorUrl"></span></a>
 	</p>
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	<script>
@@ -25,12 +24,9 @@
 				data : $('form').serialize(),
 				success : function(data) {
 					$('#shorUrl').text(data);
+					$("#hlink").prop("href", data)
 				}
 			})
-		});
-		
-		$('#shorUrl').click(function() {
-			
 		});
 
 		$('input[type="text"]').keydown(function() {
@@ -46,7 +42,8 @@
 				})
 		    }
 		});
-		
 	</script>
+	<br>
+	<a href="/login"><button type="button">login</button></a>
 </body>
 </html>

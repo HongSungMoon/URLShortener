@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.urlshortener.database.URLShortenerMapper">
+
+    <select id="getCurrentDateTime" resultType="String">
+        SELECT NOW();
+    </select>
+    
+    <select id="getLastIndex" resultType="Integer">
+        SELECT 
+        	LAST_INSERT_ID()
+        from
+        	URLSHORTENER;
+    </select>
+    
+    <insert id="insertURL" parameterType="Map">
+    	insert into URLSHORTENER (
+    		shorturl,
+    		longurl
+    	) 
+    	values (
+    		#{shortURL},
+    		#{longURL}
+    	)
+    </insert>
+    
+    <select id="getShortByLong" parameterType="String" resultType="String">
+    	select
+    		shorturl
+    	from
+    		URLSHORTENER
+    	where
+    		longurl = #{longURL}
+    </select>
+    
+    <select id="getLongByShort" parameterType="String" resultType="String">
+    	select
+    		longurl
+    	from
+    		URLSHORTENER
+    	where
+    		shorturl = #{shortURL}
+    </select>
+</mapper>

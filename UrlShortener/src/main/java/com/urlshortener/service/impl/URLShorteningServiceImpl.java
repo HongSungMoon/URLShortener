@@ -6,18 +6,22 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.urlshortener.database.URLShortenerMapper;
 import com.urlshortener.util.Base62Util;
 import com.urlshortner.service.URLShorteningService;
 
 @Service("urlShorteningService")
 public class URLShorteningServiceImpl implements URLShorteningService {
+	
+	@Autowired
+	private URLShortenerMapper urlShortenerMapper;
 
 	private Base62Util base62Util =  Base62Util.createInstance();
-	private HashMap<String, String> shortMap = new HashMap<String, String>();
-	private HashMap<String, String> longMap = new HashMap<String, String>();
 	
 	public String urlShortening(String url) throws MalformedURLException, ProtocolException {
 		
@@ -41,17 +45,24 @@ public class URLShorteningServiceImpl implements URLShorteningService {
 		if(code == 404)
 			return "Invalid URL";
 
-		if(longMap.containsKey(url))
-			return longMap.get(url);
+		// longURL을 통한 shortURL검
+		String shortURL = urlShortenerMapper.getShortByLong(url);
+		if(shortURL != null)
+			return shortURL;
 		
+		// URL 저
 		int hashCode = url.hashCode();
+		String longURL = null;
 		String newUrl = null;
 		while (true) {
 			byte[] result = base62Util.encode(Integer.toString((hashCode / 100000)).getBytes());
 			newUrl = "http://localhost:8080/page/" + new String(result);
-			if(!shortMap.containsKey(newUrl)) {
-				shortMap.put(newUrl, url);
-				longMap.put(url, newUrl);
+			longURL = urlShortenerMapper.getLongByShort(newUrl);
+			if(longURL == null) {
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("longURL", url);
+				map.put("shortURL", newUrl);
+				urlShortenerMapper.insertURL(map);
 				break;
 			}
 			hashCode += 100000;
@@ -62,8 +73,10 @@ public class URLShorteningServiceImpl implements URLShorteningService {
 
 	@Override
 	public String getLongUrl(String url) {
-		String plainUrl = shortMap.get("http://localhost:8080/page/" + url);
+		
+		String plainUrl = urlShortenerMapper.getLongByShort("http://localhost:8080/page/" + url);
 		return plainUrl;
+		
 	}
 
 }
