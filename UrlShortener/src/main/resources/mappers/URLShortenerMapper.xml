@@ -7,17 +7,10 @@
         SELECT NOW();
     </select>
     
-    <select id="getLastIndex" resultType="Integer">
-        SELECT 
-        	LAST_INSERT_ID()
-        from
-        	URLSHORTENER;
-    </select>
-    
     <insert id="insertURL" parameterType="Map">
     	insert into URLSHORTENER (
-    		shorturl,
-    		longurl
+    		short_url,
+    		long_url
     	) 
     	values (
     		#{shortURL},
@@ -27,19 +20,36 @@
     
     <select id="getShortByLong" parameterType="String" resultType="String">
     	select
-    		shorturl
+    		short_url
     	from
     		URLSHORTENER
     	where
-    		longurl = #{longURL}
+    		long_url = #{longURL}
     </select>
     
     <select id="getLongByShort" parameterType="String" resultType="String">
     	select
-    		longurl
+    		long_url
     	from
     		URLSHORTENER
     	where
-    		shorturl = #{shortURL}
+    		short_url = #{shortURL}
     </select>
+    
+    <delete id="deleteExpiredURL" parameterType="Date">
+    	delete from 
+    		URLSHORTENER
+    	<![CDATA[
+    	where 
+    		reg_date < #{date}
+    	]]>
+    </delete>
+    
+    <select id="getLastIdx" resultType="Integer">
+    	select
+    		(max(idx) + 1) as idx
+    	from
+    		URLSHORTENER
+    </select>
+
 </mapper>
