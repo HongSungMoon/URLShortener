@@ -46,7 +46,6 @@ public class URLShorteningServiceImpl implements URLShorteningService {
 
 		// URL 저장
 		int newIdx = urlShortenerMapper.getLastIdx();
-		String longURL = null;
 		String newUrl = null;
 		int encodedIdx = xorEncodingUtil.encode(newIdx);
 
